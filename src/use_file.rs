@@ -24,7 +24,7 @@ const FILE_PATH: &str = "rand:\0";
     target_os = "illumos"
 ))]
 const FILE_PATH: &str = "/dev/random\0";
-#[cfg(any(target_os = "android", target_os = "linux"))]
+#[cfg(any(target_os = "aix", target_os = "android", target_os = "linux"))]
 const FILE_PATH: &str = "/dev/urandom\0";
 
 pub fn getrandom_inner(dest: &mut [u8]) -> Result<(), Error> {

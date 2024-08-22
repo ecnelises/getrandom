@@ -31,6 +31,7 @@
 //! | Web browsers     | [`Crypto.getRandomValues`][14] (see [Support for WebAssembly and asm.js][16])
 //! | Node.js          | [`crypto.randomBytes`][15] (see [Support for WebAssembly and asm.js][16])
 //! | WASI             | [`__wasi_random_get`][17]
+//! | AIX              | [`/dev/urandom`][23]
 //!
 //! Getrandom doesn't have a blanket implementation for all Unix-like operating
 //! systems that reads from `/dev/urandom`. This ensures all supported operating
@@ -121,6 +122,7 @@
 //! [20]: https://www.unix.com/man-page/mojave/4/random/
 //! [21]: https://www.freebsd.org/cgi/man.cgi?query=getrandom&manpath=FreeBSD+12.0-stable
 //! [22]: https://github.com/hermitcore/libhermit-rs/blob/09c38b0371cee6f56a541400ba453e319e43db53/src/syscalls/random.rs#L21
+//! [23]: https://www.ibm.com/docs/en/aix/7.3?topic=files-random-urandom-devices
 
 #![doc(
     html_logo_url = "https://www.rust-lang.org/logos/rust-logo-128x128-blk.png",
@@ -165,6 +167,7 @@ mod util;
 #[cfg(any(
     feature = "std",
     all(windows, not(getrandom_uwp)),
+    target_os = "aix",
     target_os = "android",
     target_os = "dragonfly",
     target_os = "emscripten",
@@ -192,6 +195,12 @@ cfg_if! {
         #[path = "linux_android.rs"] mod imp;
     } else if #[cfg(target_os = "cloudabi")] {
         #[path = "cloudabi.rs"] mod imp;
+    } else if #[cfg(target_os = "aix")] {
+        mod util_libc;
+        #[path = "use_file.rs"] mod imp;
+    } else if #[cfg(target_os = "aix")] {
+        mod util_libc;
+        #[path = "use_file.rs"] mod imp;
     } else if #[cfg(target_os = "dragonfly")] {
         mod util_libc;
         #[path = "use_file.rs"] mod imp;

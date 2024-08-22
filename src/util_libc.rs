@@ -23,6 +23,8 @@ cfg_if! {
         use libc::__error as errno_location;
     } else if #[cfg(target_os = "haiku")] {
         use libc::_errnop as errno_location;
+    } else if #[cfg(target_os = "aix")] {
+        use libc::_Errno as errno_location;
     }
 }
 
